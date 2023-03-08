@@ -1,5 +1,7 @@
 const express = require('express');
 const path = require('path');
+const multer  = require('multer');
+const upload = multer({dest: 'uploads/'});
 
 const app = express(); 
 
@@ -13,6 +15,7 @@ app.use((req, res, next) => {
 app.use(express.static(path.join(__dirname, '/public')));
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
+
 
 const hbs = require('express-handlebars'); 
 
@@ -43,8 +46,10 @@ app.get('/history', (req, res) => {
     res.render('history');
 }); 
 
-app.post('/contact/send-message', (req, res) => {
-    const {author, sender, title, message, file } = req.body; 
+app.post('/contact/send-message', upload.single('jakisPlik'), (req, res) => {
+    const {author, sender, title, message } = req.body; 
+
+    const file = req.file;
     
     if(author && sender && title && message && file) {
         res.render('contact', { isSent: true });
